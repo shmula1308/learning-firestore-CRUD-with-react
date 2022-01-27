@@ -1,0 +1,19 @@
+.form-container {
+  margin: 0 auto;
+  width: 400px;
+  background-color: aliceblue;
+  padding: 1.5em 1em;
+}
+
+.form-control label {
+  display: inline-block;
+  margin-bottom: 0.5em;
+}
+
+.form-control input {
+  display: block;
+  width: 100%;
+  padding: 0.5em;
+  font-size: 1rem;
+  margin-bottom: 1em;
+}

@@ -1,0 +1,33 @@
+.landing {
+  text-align: center;
+}
+
+.title {
+  color: #233748;
+  margin-bottom: 2em;
+}
+
+.btn {
+  display: inline-block;
+  text-decoration: none;
+  font-weight: 800;
+  padding: 0.8em 1.6em;
+  border-radius: 50px;
+  font-size: 1.2rem;
+  margin: 0 0.5em 0 0.5em;
+}
+
+.btn:active {
+  transform: scale(0.92);
+}
+
+.btn-primary {
+  background-color: #3dc795;
+  color: #fff;
+  border: none;
+}
+.btn-secondary {
+  color: #233748;
+  border: 2px solid #233748;
+  color: #233748;
+}
