@@ -1,5 +1,7 @@
-import { Link } from "react-router-dom";
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useContext } from "react";
+import AuthContext from "../contexts/AuthContext";
+import { Link, useNavigate } from "react-router-dom";
+import { auth } from "../Firebase/firebase";
 import styles from "./SignIn.module.css";
 
 const SignInForm = () => {
@@ -7,9 +9,23 @@ const SignInForm = () => {
   const passwordRef = useRef();
   const [isLoading, setIsloading] = useState(false);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
-  const onSubmitHandler = (ev) => {
+  const authCtx = useContext(AuthContext);
+
+  const onSubmitHandler = async (ev) => {
     ev.preventDefault();
+    const email = emailRef.current.value.trim();
+    const password = passwordRef.current.value;
+    try {
+      setError("");
+      setError(true);
+      await authCtx.signIn(auth, email, password);
+      navigate("/homepage");
+    } catch (error) {
+      setError(error.message);
+      setIsloading(false);
+    }
   };
 
   return (

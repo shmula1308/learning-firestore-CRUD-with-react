@@ -1,11 +1,16 @@
 import React, { useRef, useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import AuthContext from "../contexts/AuthContext";
+import FirestoreContext from "../contexts/FirestoreContext";
 import { Link } from "react-router-dom";
 import { auth } from "../Firebase/firebase";
+import { db } from "../Firebase/firebase";
 import styles from "./SignUp.module.css";
 
 const SignUpForm = () => {
   const authCtx = useContext(AuthContext);
+  const dbCtx = useContext(FirestoreContext);
+  const navigate = useNavigate();
 
   const nameRef = useRef();
   const emailRef = useRef();
@@ -14,11 +19,11 @@ const SignUpForm = () => {
   const [isLoading, setIsloading] = useState(false);
   const [error, setError] = useState("");
 
-  const onSubmitHandler = (ev) => {
+  const onSubmitHandler = async (ev) => {
     ev.preventDefault();
 
-    const fullName = nameRef.current.value;
-    const email = emailRef.current.value;
+    const fullName = nameRef.current.value.trim();
+    const email = emailRef.current.value.trim();
     const passwordOne = passwordRef.current.value;
     const passwordTwo = passwordConfirmationRef.current.value;
 
@@ -29,21 +34,31 @@ const SignUpForm = () => {
     if (passwordOne !== passwordTwo) {
       return setError("Passwords must match");
     }
-    console.log(authCtx);
-    setIsloading(true);
-    setError("");
-    authCtx
-      .signUp(auth, email, passwordOne)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        console.log(user);
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        setError(errorMessage);
-      });
-    setIsloading(false);
+    try {
+      setIsloading(true);
+      setError("");
+
+      // signup user and add their credentials to firebase authentication
+      const userCredential = await authCtx.signUp(auth, email, passwordOne);
+      await authCtx.verifyUserEmail();
+
+      const document = {
+        username: fullName,
+        email,
+      };
+      console.log(document);
+
+      // write user data to firestore. Pass in the pointer to db, collection name(implicitly created) and document
+      const docRef = await dbCtx.writeDataToCollection(db, "users", document); // do not forget await, it's async!!! Otherwise you wont get data written in firestore
+      console.log("docRef", docRef);
+
+      // setIsloading(false); in the hook useFirebaseAuthentication the redirect is happening before the setIsLoading(false) and rerender of the signup component happens causing a memory leak. Since there is no error, perhaps there is no need to setLoading to false
+    } catch (error) {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      setError(errorMessage);
+      setIsloading(false);
+    }
   };
 
   return (
