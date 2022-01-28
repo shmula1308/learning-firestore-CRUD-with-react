@@ -22,7 +22,14 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-        <Route path='/' element={<LandingPage />} />
+        <Route
+          path='/'
+          element={
+            <IsUserAuthenticated>
+              <LandingPage />
+            </IsUserAuthenticated>
+          }
+        />
         <Route
           path='/signin'
           element={
@@ -31,8 +38,22 @@ const App = () => {
             </IsUserAuthenticated>
           }
         />
-        <Route path='/signup' element={<SignUpForm />} />
-        <Route path='/email/verify-email' element={<VerifyEmailPage />} />
+        <Route
+          path='/signup'
+          element={
+            <IsUserAuthenticated>
+              <SignUpForm />
+            </IsUserAuthenticated>
+          }
+        />
+        <Route
+          path='/email/verify-email'
+          element={
+            <IsUserAuthenticated>
+              <VerifyEmailPage />
+            </IsUserAuthenticated>
+          }
+        />
       </Routes>
     </div>
   );

@@ -23,3 +23,13 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+
+# If you have already added the files to be tracked, you need to remove them from tracking before attempting to add them to .gitignore
+
+# git rm .env --cached
+# git commit -m "Stopped tracking .env"
+# Note: Keep in mind that the contents of those files are in your history, and if they did contain sensitive data, then you need to completely remove that from history before putting it out there.
+
+# https://www.ducea.com/2012/02/07/howto-completely-remove-a-file-from-git-history/
+

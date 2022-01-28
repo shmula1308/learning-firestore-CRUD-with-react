@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { auth } from "../Firebase/firebase";
 import { db } from "../Firebase/firebase";
 import styles from "./SignUp.module.css";
+import { doc } from "firebase/firestore";
 
 const SignUpForm = () => {
   const authCtx = useContext(AuthContext);
@@ -46,9 +47,9 @@ const SignUpForm = () => {
         username: fullName,
         email,
       };
-      console.log(document);
 
       // write user data to firestore. Pass in the pointer to db, collection name(implicitly created) and document
+
       const docRef = await dbCtx.writeDataToCollection(db, "users", document); // do not forget await, it's async!!! Otherwise you wont get data written in firestore
       console.log("docRef", docRef);
 
