@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { auth } from "../Firebase/firebase";
 import { db } from "../Firebase/firebase";
 import styles from "./SignUp.module.css";
-import { doc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 
 const SignUpForm = () => {
   const authCtx = useContext(AuthContext);
@@ -48,10 +48,11 @@ const SignUpForm = () => {
         email,
       };
 
-      // write user data to firestore. Pass in the pointer to db, collection name(implicitly created) and document
+      const uid = userCredential.user.uid;
 
-      const docRef = await dbCtx.writeDataToCollection(db, "users", document); // do not forget await, it's async!!! Otherwise you wont get data written in firestore
-      console.log("docRef", docRef);
+      // write user data to firestore. Pass in the pointer to db, collection name(implicitly created) and document, also Im supplying my own custom id.
+      const docRef = doc(db, "users", uid);
+      await setDoc(docRef, document);
 
       // setIsloading(false); in the hook useFirebaseAuthentication the redirect is happening before the setIsLoading(false) and rerender of the signup component happens causing a memory leak. Since there is no error, perhaps there is no need to setLoading to false
     } catch (error) {

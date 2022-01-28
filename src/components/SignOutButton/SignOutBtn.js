@@ -9,6 +9,7 @@ const SignOutBtn = () => {
 
   const onSignOutHandler = () => {
     authCtx.signOut(auth);
+    localStorage.removeItem("authUser");
     navigate("/signin", { replace: true });
   };
 

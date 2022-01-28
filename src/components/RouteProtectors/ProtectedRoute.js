@@ -5,7 +5,6 @@ import AuthContext from "../contexts/AuthContext";
 const ProtectedRoute = ({ children }) => {
   const navigate = useNavigate();
   const authCtx = useContext(AuthContext);
-  console.log(authCtx.authUser);
   useEffect(() => {
     if (!authCtx.authUser) {
       navigate("/signin", { replace: true });
