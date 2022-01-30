@@ -13,7 +13,7 @@ const useGetCollectionOnChange = (col) => {
       setDocs(docs);
     });
     return unsub;
-  }, []);
+  }, [col]);
   return docs;
 };
 

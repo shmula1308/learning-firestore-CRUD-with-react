@@ -1,27 +1,39 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { db } from "../Firebase/firebase";
-import { collection, getDocs, setDoc, doc, onSnapshot } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  setDoc,
+  doc,
+  onSnapshot,
+  updateDoc,
+  deleteDoc,
+  deleteField,
+} from "firebase/firestore";
 
 const FirestoreContext = React.createContext({
-  users: null,
+  // users: null,
   getEntireCollection: () => {},
   writeUserData: () => {},
   getEntireCollectionOnChange: () => {},
+  updateDocument: () => {},
+  deleteDocument: () => {},
+  deleteDocumentField: () => {},
 });
 
 export const FirestoreContextProvider = ({ children }) => {
-  const [users, setUsers] = useState(null);
+  // const [users, setUsers] = useState(null);
 
-  useEffect(() => {
-    const unsub = onSnapshot(collection(db, "users"), (result) => {
-      const docs = [];
-      result.forEach((doc) => {
-        docs.push({ id: doc.id, ...doc.data() });
-      });
-      setUsers(docs);
-    });
-    return unsub;
-  }, []);
+  // useEffect(() => {
+  //   const unsub = onSnapshot(collection(db, "users"), (result) => {
+  //     const docs = [];
+  //     result.forEach((doc) => {
+  //       docs.push({ id: doc.id, ...doc.data() });
+  //     });
+  //     setUsers(docs);
+  //   });
+  //   return unsub;
+  // }, []);
 
   const writeUserData = async (db, documentId, document) => {
     const docRef = doc(db, "users", documentId);
@@ -35,8 +47,23 @@ export const FirestoreContextProvider = ({ children }) => {
     });
     return docs;
   };
+
+  const updateDocument = async (docRef, update) => {
+    await updateDoc(docRef, update);
+  };
+
+  const deleteDocument = async (docRef) => {
+    await deleteDoc(docRef);
+  };
+
+  const deleteDocumentField = async (docRef, fieldToDelete) => {
+    const update = {};
+    update[fieldToDelete] = deleteField();
+    await updateDoc(docRef, update);
+  };
   return (
-    <FirestoreContext.Provider value={{ getEntireCollection, writeUserData, users }}>
+    <FirestoreContext.Provider
+      value={{ getEntireCollection, writeUserData, updateDocument, deleteDocument, deleteDocumentField }}>
       {children}
     </FirestoreContext.Provider>
   );
