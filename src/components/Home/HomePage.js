@@ -12,6 +12,11 @@ import {
   updateDoc,
   arrayUnion,
   arrayRemove,
+  getDoc,
+  getDocFromCache,
+  query,
+  where,
+  getDocs,
 } from "firebase/firestore";
 
 const HomePage = () => {
@@ -53,7 +58,75 @@ const HomePage = () => {
       // await updateDoc(docRefAutoGen, { "colors.hobbies": arrayUnion("mimi") });
       // const docRef = doc(db, "users", "qTmHnMEBlXeWqCh6HshFdLip12E2");
       // dbCtx.deleteDocumentField(docRef, "love");
+      // const docRef = doc(db, "cities", "TOK");
+      // const docSnap = await getDoc(docRef);
+      // if (docSnap.exists()) {
+      //   console.log(docSnap.data());
+      // } else {
+      //   console.log("The document does not exist");
+      // }
+      // const docRef = doc(db, "cities", "TOK");
+      // try {
+      //   const docSnap = await getDocFromCache(docRef);
+      //   console.log(docSnap.data());
+      // } catch (error) {
+      //   console.log(error);
+      // }
+      // const q = query(collection(db, "cities"), where("capital", "==", true));
+      // const docSnap = await getDocs(q); // the docs that come back are an array of docs
+      // // docSnap has a forEach method that you can use to iterate overe the doc in the array
+      // docSnap.forEach((doc) => {
+      //   console.log(doc.data());
+      // });
+      // takes two argument. the colllection of documents you want to query and where() method with 3 argument that specvay the property,operator and value of the document you want to get
+
+      await onSnapshot(doc(db, "cities", "TOK"), (doc) => {
+        console.log(doc.data());
+      });
     };
+    // const citiesRef = collection(db, "cities");
+    // await setDoc(doc(citiesRef, "SF"), {
+    //   name: "San Francisco",
+    //   state: "CA",
+    //   country: "USA",
+    //   capital: false,
+    //   population: 860000,
+    //   regions: ["west_coast", "norcal"],
+    // });
+    // await setDoc(doc(citiesRef, "LA"), {
+    //   name: "Los Angeles",
+    //   state: "CA",
+    //   country: "USA",
+    //   capital: false,
+    //   population: 3900000,
+    //   regions: ["west_coast", "socal"],
+    // });
+    // await setDoc(doc(citiesRef, "DC"), {
+    //   name: "Washington, D.C.",
+    //   state: null,
+    //   country: "USA",
+    //   capital: true,
+    //   population: 680000,
+    //   regions: ["east_coast"],
+    // });
+    // await setDoc(doc(citiesRef, "TOK"), {
+    //   name: "Tokyo",
+    //   state: null,
+    //   country: "Japan",
+    //   capital: true,
+    //   population: 9000000,
+    //   regions: ["kanto", "honshu"],
+    // });
+    // await setDoc(doc(citiesRef, "BJ"), {
+    //   name: "Beijing",
+    //   state: null,
+    //   country: "China",
+    //   capital: true,
+    //   population: 21500000,
+    //   regions: ["jingjinji", "hebei"],
+    // });
+    // const citiesRef = collection(db, "cities");
+    // await setDoc(doc(db, "cities"), { city: "milizza" }); ---> this will not work
 
     writeToDatabaseTesting();
   }, []);
