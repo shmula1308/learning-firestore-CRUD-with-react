@@ -58,7 +58,9 @@ const HomePage = () => {
   useEffect(() => {
     // Query the first page of docs
     const first = query(collection(db, "cities"), orderBy("name"), limit(3));
+
     const unsubscribe = onSnapshot(first, (result) => {
+      console.log(result);
       const cities = [];
       const firstVis = result.docs[0];
       const lastVis = result.docs[result.docs.length - 1];
