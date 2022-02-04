@@ -170,7 +170,7 @@ const HomePage = () => {
   const onUpdateHandler = () => {
     const docRef = doc(db, "cities", "TOK");
     dbCtx.updateDocument(docRef, {
-      name: "Toko",
+      country: "JA",
     });
   };
 
