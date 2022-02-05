@@ -57,7 +57,7 @@ const HomePage = () => {
 
   useEffect(() => {
     // Query the first page of docs
-    const first = query(collection(db, "cities"), orderBy("name"), limit(3));
+    const first = query(collection(db, "cities"), where("capital", "==", true), orderBy("name"), limit(3));
 
     const unsubscribe = onSnapshot(first, (result) => {
       console.log(result);
