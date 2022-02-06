@@ -5,6 +5,7 @@ import {
   getDocs,
   setDoc,
   doc,
+  getDoc,
   onSnapshot,
   updateDoc,
   deleteDoc,
@@ -19,6 +20,7 @@ const FirestoreContext = React.createContext({
   updateDocument: () => {},
   deleteDocument: () => {},
   deleteDocumentField: () => {},
+  getSingleDocument: () => {},
 });
 
 export const FirestoreContextProvider = ({ children }) => {
@@ -38,6 +40,9 @@ export const FirestoreContextProvider = ({ children }) => {
   const writeUserData = async (db, documentId, document) => {
     const docRef = doc(db, "users", documentId);
     await setDoc(docRef, document);
+  };
+  const getSingleDocument = async (docRef) => {
+    await getDoc(docRef);
   };
   const getEntireCollection = async (db, col) => {
     const querySnapshot = await getDocs(collection(db, col));
@@ -63,7 +68,14 @@ export const FirestoreContextProvider = ({ children }) => {
   };
   return (
     <FirestoreContext.Provider
-      value={{ getEntireCollection, writeUserData, updateDocument, deleteDocument, deleteDocumentField }}>
+      value={{
+        getEntireCollection,
+        writeUserData,
+        updateDocument,
+        deleteDocument,
+        deleteDocumentField,
+        getSingleDocument,
+      }}>
       {children}
     </FirestoreContext.Provider>
   );

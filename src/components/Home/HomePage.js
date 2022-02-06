@@ -57,7 +57,7 @@ const HomePage = () => {
 
   useEffect(() => {
     // Query the first page of docs
-    const first = query(collection(db, "cities"), where("capital", "==", true), orderBy("name"), limit(3));
+    const first = query(collection(db, "cities"), where("capital", "==", true), limit(11));
 
     const unsubscribe = onSnapshot(first, (result) => {
       console.log(result);
@@ -167,11 +167,20 @@ const HomePage = () => {
     }
   };
 
-  const onUpdateHandler = () => {
-    const docRef = doc(db, "cities", "TOK");
-    dbCtx.updateDocument(docRef, {
-      country: "JA",
-    });
+  const onUpdateHandler = async () => {
+    // const docRef = doc(db, "cities", "TOK");
+    // dbCtx.updateDocument(docRef, {
+    //   country: "Hallall",
+    // });
+    const docRef = doc(db, "cities/BJ/private_data", "private");
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      console.log("Document data:", docSnap.data());
+    } else {
+      // doc.data() will be undefined in this case
+      console.log("No such document!");
+    }
   };
 
   return (
