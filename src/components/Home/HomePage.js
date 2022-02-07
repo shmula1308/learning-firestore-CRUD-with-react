@@ -172,7 +172,10 @@ const HomePage = () => {
     // dbCtx.updateDocument(docRef, {
     //   country: "Hallall",
     // });
-    const docRef = doc(db, "cities/BJ/private_data", "private");
+    // subcollections can be used to hide certain data that you dont want a client to be able to access. Of course you need to create two different sets of security rules one for a collection and the other for a subcollection. For example you may control the read of the subcollection only to admin users.
+    const docRef = doc(db, "cities", "/BJ/private_data/private");
+
+    //const docRef = doc(db, "cities", "BJ");
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
