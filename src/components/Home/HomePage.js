@@ -31,6 +31,8 @@ import {
 
 const HomePage = () => {
   const [cities, setCities] = useState([]);
+  const [imageUrl, setImageUrl] = useState("");
+  const [books, setBooks] = useState([]);
   const [lastVisible, setLastVisible] = useState(null);
   const [firstVisible, setFirstVisible] = useState(null);
   const [documentSnapshotSize, setDocumentSnapshotSize] = useState(null);
@@ -60,6 +62,39 @@ const HomePage = () => {
   // }, []);
 
   useEffect(() => {
+    // Get an image from the storage and display it on the screen
+    // const imageRef = ref(storage, "images/eventLoop.png");
+    // getDownloadURL(imageRef).then((url) => {
+    //   setImageUrl(url);
+    // });
+
+    // Get book collection
+    // if (books.length) {
+    //   return;
+    // }
+
+    getDocs(collection(db, "books")).then((qSnapshot) => {
+      const docs = [];
+      qSnapshot.forEach((doc) => {
+        docs.push({ id: doc.id, ...doc.data() });
+      });
+
+      docs.forEach((book) => {
+        getDownloadURL(ref(storage, book.thumbnail)).then((downloadURL) => {
+          book.thumbnail = downloadURL;
+
+          setBooks((prevBooks) => {
+            return [...prevBooks, book];
+          });
+        });
+      });
+    });
+
+    // const books = await dbCtx.getEntireCollection(db, "books"); // this really makes no sense. Im using await internally and also here
+    // console.log(books);
+
+    // setBooks(books);
+
     // Query the first page of docs
     const first = query(collection(db, "cities"), where("capital", "==", true), limit(11));
 
@@ -282,12 +317,28 @@ const HomePage = () => {
     <div>
       <h1>Homepage</h1>
       <p>Only authenticated users can access this page</p>
-      <ul>
+      {/* <ul>
         {cities.length > 0 &&
           cities.map((doc) => {
-            return <li key={doc.id}>{doc.name}</li>;
+            return (
+              <div key={doc.id}>
+                <li>{doc.name}</li>
+              </div>
+            );
+          })}
+      </ul> */}
+      <ul>
+        {books.length > 0 &&
+          books.map((book) => {
+            return (
+              <div key={book.id}>
+                <li>{book.name}</li>
+                <img width='350' src={book.thumbnail} />
+              </div>
+            );
           })}
       </ul>
+
       <div>
         <form onSubmit={onSubmitFile}>
           <div>
