@@ -5,7 +5,14 @@ import SignOutBtn from "../SignOutButton/SignOutBtn";
 import { auth } from "../Firebase/firebase";
 import { db } from "../Firebase/firebase";
 import { storage } from "../Firebase/firebase";
-import { ref, uploadBytes, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import {
+  ref,
+  uploadBytes,
+  uploadBytesResumable,
+  getDownloadURL,
+  getMetadata,
+  listAll,
+} from "firebase/storage";
 import {
   onSnapshot,
   collection,
@@ -68,18 +75,70 @@ const HomePage = () => {
     //   setImageUrl(url);
     // });
 
-    // Get book collection
-    // if (books.length) {
-    //   return;
-    // }
+    // List files and prefixes from storage
 
+    const listRef = ref(storage, "images");
+    listAll(listRef).then((res) => {
+      // Here we get two properties/arrays --> prefixes and items which we can loop with forEach
+
+      res.prefixes.forEach((folderRef) => {
+        // but this gives me nothing with ref(storage,"images")
+        console.log(folderRef);
+      });
+      res.items.forEach((item) => {
+        // Here i can now create download links for the admin section
+        console.log(item._location.path_);
+        // I can now use this with getDownloadURL() insert them in a link perhaps
+        //images/1*lFGlOSW19H184tUt9DhvUg@2x.png
+        console.log(item);
+      });
+    });
+
+    // Dont call storage if there are items displayed on screen. I always thought that when i save in vs code the whole component gets rerendered. And it does, but the page is not reloaded in the browser. Realoading append new items to the books array. Code below prevents that
+    if (books.length) {
+      return;
+    }
+
+    // Get metadata for a file
+    const fileRef = ref(storage, "/files/qTmHnMEBlXeWqCh6HshFdLip12E2");
+
+    getMetadata(fileRef)
+      .then((metadata) => {
+        console.log(metadata);
+      })
+      .catch((error) => {
+        console.log(error.code);
+      });
+
+    // bucket: "learning-firestore-with-react.appspot.com"
+    // cacheControl: undefined
+    // contentDisposition: "inline; filename*=utf-8''qTmHnMEBlXeWqCh6HshFdLip12E2"
+    // contentEncoding: "identity"
+    // contentLanguage: undefined
+    // contentType: "image/png"
+    // customMetadata: undefined
+    // fullPath: "files/qTmHnMEBlXeWqCh6HshFdLip12E2"
+    // generation: "1644329189964073"
+    // md5Hash: "hU/1sv8tUCzAUniaE0dzyA=="
+    // metageneration: "1"
+    // name: "qTmHnMEBlXeWqCh6HshFdLip12E2"
+    // size: 68113
+    // timeCreated: "2022-02-08T14:06:30.035Z"
+    // type: "file"
+    // updated: "2022-02-08T14:06:30.035Z"
+    // ref: (...)
+    // get ref: ƒ generateRef()
+
+    // This is async
     getDocs(collection(db, "books")).then((qSnapshot) => {
+      // This is not async
       const docs = [];
       qSnapshot.forEach((doc) => {
         docs.push({ id: doc.id, ...doc.data() });
       });
 
       docs.forEach((book) => {
+        // This below is async
         getDownloadURL(ref(storage, book.thumbnail)).then((downloadURL) => {
           book.thumbnail = downloadURL;
 
