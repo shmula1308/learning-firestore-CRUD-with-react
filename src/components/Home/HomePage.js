@@ -130,24 +130,24 @@ const HomePage = () => {
     // get ref: ƒ generateRef()
 
     // This is async
-    getDocs(collection(db, "books")).then((qSnapshot) => {
-      // This is not async
-      const docs = [];
-      qSnapshot.forEach((doc) => {
-        docs.push({ id: doc.id, ...doc.data() });
-      });
+    // getDocs(collection(db, "books")).then((qSnapshot) => {
+    //   // This is not async
+    //   const docs = [];
+    //   qSnapshot.forEach((doc) => {
+    //     docs.push({ id: doc.id, ...doc.data() });
+    //   });
 
-      docs.forEach((book) => {
-        // This below is async
-        getDownloadURL(ref(storage, book.thumbnail)).then((downloadURL) => {
-          book.thumbnail = downloadURL;
+    //   docs.forEach((book) => {
+    //     // This below is async
+    //     getDownloadURL(ref(storage, book.thumbnail)).then((downloadURL) => {
+    //       book.thumbnail = downloadURL;
 
-          setBooks((prevBooks) => {
-            return [...prevBooks, book];
-          });
-        });
-      });
-    });
+    //       setBooks((prevBooks) => {
+    //         return [...prevBooks, book];
+    //       });
+    //     });
+    //   });
+    // });
 
     // const books = await dbCtx.getEntireCollection(db, "books"); // this really makes no sense. Im using await internally and also here
     // console.log(books);
@@ -155,7 +155,7 @@ const HomePage = () => {
     // setBooks(books);
 
     // Query the first page of docs
-    const first = query(collection(db, "cities"), where("capital", "==", true), limit(11));
+    const first = query(collection(db, "cities"), where("capital", "==", true), limit(3));
 
     const unsubscribe = onSnapshot(first, (result) => {
       console.log(result);
@@ -174,7 +174,7 @@ const HomePage = () => {
 
   const onNextPageHandler = () => {
     const next = query(collection(db, "cities"), orderBy("name"), startAfter(lastVisible), limit(3));
-    // Im not unsubscribing because this is not a lifecycle method. I need a realtime listener for every document that the user is looking at, in case someone else reserves the book
+    // I'm not unsubscribing because this is not a lifecycle method. I need a realtime listener for every document that the user is looking at, in case someone else reserves the book
     onSnapshot(next, (result) => {
       if (!result.docs.length) {
         return;
@@ -188,7 +188,9 @@ const HomePage = () => {
       result.forEach((city) => {
         cities.push({ id: city.id, ...city.data() });
       });
-      setCities(cities);
+      setCities((prevCities) => {
+        return [...prevCities, ...cities];
+      });
     });
   };
 
@@ -376,7 +378,7 @@ const HomePage = () => {
     <div>
       <h1>Homepage</h1>
       <p>Only authenticated users can access this page</p>
-      {/* <ul>
+      <ul>
         {cities.length > 0 &&
           cities.map((doc) => {
             return (
@@ -385,8 +387,8 @@ const HomePage = () => {
               </div>
             );
           })}
-      </ul> */}
-      <ul>
+      </ul>
+      {/* <ul>
         {books.length > 0 &&
           books.map((book) => {
             return (
@@ -396,7 +398,7 @@ const HomePage = () => {
               </div>
             );
           })}
-      </ul>
+      </ul> */}
 
       <div>
         <form onSubmit={onSubmitFile}>
@@ -410,7 +412,7 @@ const HomePage = () => {
         {/* {progress === 0 ? "" : <h3>Uploaded:{progress} %</h3>} */}
         <hr />
         <button onClick={onPreviousPageHandler}>Previous</button>
-        <button onClick={onNextPageHandler}>Next</button>
+        <button onClick={onNextPageHandler}>Load more</button>
         <button onClick={onUpdateHandler}>Update City</button>
         <button onClick={onStorageHandler}>Storage Experiment</button>
       </div>
